@@ -10,36 +10,48 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-// ✅ Ensure uploads directory exists
+// ================= UPLOAD SETUP =================
+
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// ✅ File upload setup (fixed path)
 const upload = multer({ dest: uploadDir });
 
 // ================= API ROUTES =================
 
 // Mock database
 const users = [
-  { id: 1, email: 'admin@agriprecision.ai', password: 'password123', name: 'Aashish', role: 'Chief Agronomist' }
+  {
+    id: 1,
+    email: 'admin@agriprecision.ai',
+    password: 'password123',
+    name: 'Aashish',
+    role: 'Chief Agronomist'
+  }
 ];
 
-// Auth route
+// Login route
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email && u.password === password);
+
+  const user = users.find(
+    (u) => u.email === email && u.password === password
+  );
 
   if (user) {
     const { password: _, ...userWithoutPassword } = user;
     res.json({ success: true, user: userWithoutPassword });
   } else {
-    res.status(401).json({ success: false, message: 'Invalid credentials' });
+    res.status(401).json({
+      success: false,
+      message: 'Invalid credentials'
+    });
   }
 });
 
-// Image Analysis route
+// Image analysis route
 app.post('/api/analyze', upload.single('image'), (req, res) => {
   const mockResults = [
     { type: 'Loamy Soil', confidence: '94.2%', organicMatter: '6.5%', texture: 'Medium-grained' },
@@ -56,11 +68,11 @@ app.post('/api/analyze', upload.single('image'), (req, res) => {
 
 // ================= FRONTEND =================
 
-// ✅ Serve Vite build
+// Serve static files
 app.use(express.static(path.join(__dirname, '../dist')));
 
-// ✅ SPA fallback (IMPORTANT for React routing)
-app.get('*', (req, res) => {
+// ✅ FIXED for Express v5 (IMPORTANT)
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
