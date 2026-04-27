@@ -7,16 +7,15 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// ================= MIDDLEWARE =================
 app.use(cors());
 app.use(express.json());
 
 // ================= UPLOAD SETUP =================
-
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
 const upload = multer({ dest: uploadDir });
 
 // ================= API ROUTES =================
@@ -42,13 +41,13 @@ app.post('/api/login', (req, res) => {
 
   if (user) {
     const { password: _, ...userWithoutPassword } = user;
-    res.json({ success: true, user: userWithoutPassword });
-  } else {
-    res.status(401).json({
-      success: false,
-      message: 'Invalid credentials'
-    });
+    return res.json({ success: true, user: userWithoutPassword });
   }
+
+  return res.status(401).json({
+    success: false,
+    message: 'Invalid credentials'
+  });
 });
 
 // Image analysis route
@@ -68,16 +67,17 @@ app.post('/api/analyze', upload.single('image'), (req, res) => {
 
 // ================= FRONTEND =================
 
-// Serve static files
+// Serve static files from Vite build
 app.use(express.static(path.join(__dirname, '../dist')));
 
-// ✅ FIXED for Express v5 (IMPORTANT)
-app.get('/*', (req, res) => {
+// ✅ FINAL FIX (Express v5 safe fallback)
+// DO NOT use '*' or '/*'
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 // ================= START SERVER =================
 
 app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
