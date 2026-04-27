@@ -18,8 +18,6 @@ docker build -t agriprecision-ai .
 
 # Run the container
 docker run -p 5001:5001 agriprecision-ai
-```
-The app will be available at `http://localhost:5001`.
 
 ### 2. Vercel / Netlify (Frontend Only)
 To deploy the frontend to Vercel:
@@ -35,3 +33,22 @@ To deploy the frontend to Vercel:
 
 ---
 © 2026 AgriPrecision.ai - Engineered for global food security.
+# 🌱 AgriPrecision AI
+
+🔗 **Live Demo:** https://agriprecision-ai.onrender.com
+
+---
+
+## 🚀 Features
+- Soil analysis using AI
+- Image-based classification
+- Smart farming recommendations
+- Voice assistant integration
+
+---
+
+## 🛠 Tech Stack
+- React + Vite
+- Node.js + Express
+- AI Integration (OpenAI)
+- Deployment: Render
